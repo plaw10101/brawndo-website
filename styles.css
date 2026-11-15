@@ -455,3 +455,43 @@ footer p {
     .hero { padding-top: 120px; }
     .floating-ad { display: none; } /* Hide floating ads on small screens to avoid clutter */
 }
+
+
+/* ---- LIVE GLOBAL VIEWS COUNTER (thin nav bar) ---- */
+.live-bar{
+  background: var(--dark);
+  border-bottom: 1px solid var(--card);
+  box-shadow: 0 2px 12px rgba(0,0,0,.4);
+  z-index: 50;
+}
+.live-bar .live-inner{
+  display:flex; align-items:center; justify-content:space-between;
+  gap:1rem; padding:.35rem 0;
+}
+.live-head{
+  font-family: var(--font-head), sans-serif;
+  font-size: .78rem; font-weight: 700; letter-spacing: .06em;
+  color: var(--accent);
+  display:flex; align-items:center; gap:.5rem;
+}
+.live-dot{
+  display:inline-block; width:8px; height:8px; border-radius:50%;
+  background:var(--accent);
+  animation:livePulse 1.8s infinite;
+}
+.live-right{display:flex;align-items:baseline;gap:.5rem;}
+.gv-number{
+  font-family:var(--font-head), sans-serif;
+  font-size:1.5rem; font-weight:900; line-height:1;
+  color:var(--accent);
+  text-shadow:0 0 14px rgba(0,230,118,.4);
+}
+.live-sub{
+  font-size:.62rem; font-weight:700; letter-spacing:.12em;
+  color:var(--green);
+}
+@keyframes livePulse{
+  0%{box-shadow:0 0 0 0 rgba(0,230,118,.65);}
+  70%{box-shadow:0 0 0 8px rgba(0,230,118,0);}
+  100%{box-shadow:0 0 0 0 rgba(0,230,118,0);}
+}

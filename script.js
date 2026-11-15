@@ -111,3 +111,44 @@ style.innerHTML = `
 }
 `;
 document.head.appendChild(style);
+
+// ===== LIVE GLOBAL VIEWS COUNTER =====
+(function () {
+    // ---------- CONFIG (edit these numbers) ----------
+    var CFG = {
+        base: 1000000,      // starting lifetime count
+        dailyJump: 8000,    // ~added each UTC day (the day-to-day step)
+        peakHour: 21,       // hour (UTC, 0-23) of peak activity
+        label: 'GLOBAL SITE VIEWS',
+        subLabel: 'EVERYBODY\u2019S DRINKING BRAWNDO'
+    };
+    // deterministic hash -> [0,1], same on every browser (reproducible)
+    function hash01(x){ var n = Math.sin(x*127.1 + 311.7) * 43758.5453; return n - Math.floor(n); }
+    // some days bigger than others (deterministic, reproducible)
+    function dayTotal(k){ return CFG.dailyJump * (0.55 + 1.4 * hash01(k)); }
+    // monotonic 0->1 across a day, NONLINEAR (fast near peak, slow at night)
+    function dayFraction(x){
+        var p = CFG.peakHour/24;
+        var a = 0.85;
+        var c = a / (2*Math.PI*(1+a));
+        return x - c*(Math.sin(2*Math.PI*(x-p)) + Math.sin(2*Math.PI*p));
+    }
+    // lifetime total derived from UTC clock -> identical for every viewer
+    function totalViews(){
+        var sec = Math.floor(Date.now()/1000);   // UTC ms since epoch, same everywhere
+        var day = Math.floor(sec/86400);
+        var x = (sec - day*86400)/86400;          // fraction of today (0..1), UTC
+        var sum = CFG.base;
+        for (var k=0;k<day;k++){ sum += dayTotal(k); }
+        sum += dayTotal(day) * dayFraction(x);     // grows within the day
+        return Math.round(sum);
+    }
+    var el = document.getElementById('gv-number');
+    function render(){ if(el){ el.textContent = totalViews().toLocaleString('en-US'); } }
+    render();
+    setInterval(render, 1000);
+    var head = document.getElementById('views-head');
+    if(head){ head.innerHTML = '<span class="live-dot"></span> ' + CFG.label; }
+    var sub = document.getElementById('views-sub');
+    if(sub){ sub.textContent = 'LIVE \u2014 ' + CFG.subLabel; }
+})();
